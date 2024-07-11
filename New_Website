@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+
+    environment {
+        // Define any necessary environment variables
+        DEPLOY_SERVER = 'your-server-address'
+        DEPLOY_USER = 'your-ssh-username'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git 'https://github.com/your-repo.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                // Add your build steps here
+                sh 'npm install'
+                sh 'npm run build'
+            }
+        }
+        stage('Test') {
+            steps {
+                // Add your test steps here
+                sh 'npm test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sshagent(['deploy-ssh-credentials']) {
+                    sh """
+                    scp -r ./dist/* ${DEPLOY_USER}@${DEPLOY_SERVER}:/path/to/your/website
+                    ssh ${DEPLOY_USER}@${DEPLOY_SERVER} 'sudo systemctl restart nginx'
+                    """
+                }
+            }
+        }
+    }
+}
