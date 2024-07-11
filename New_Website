@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/simonebinezer/New'
+                git 'https://github.com/simonebinezer/New.git'
             }
         }
         stage('Build') {
